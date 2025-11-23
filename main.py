@@ -6,6 +6,11 @@ Run this script after downloading LIDC-IDRI dataset to the data folder
 
 import os
 import sys
+
+# Force UTF-8 encoding for standard output to support emojis on Windows
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
 import argparse
 from pathlib import Path
 import json
@@ -42,45 +47,31 @@ def set_seed(seed: int = 42):
 def find_lidc_data(data_root: Path) -> Path:
     """
     Automatically find LIDC-IDRI dataset directory
-    Looks for common folder names and structures
+    Looks for the first LIDC-IDRI-* folder recursively
     """
-    possible_names = [
-        'LIDC-IDRI',
-        'lidc-idri',
-        'LIDC',
-        'lidc',
-        'data',
-        'LIDC_IDRI'
-    ]
-    
-    # Check if data_root itself contains LIDC folders
     if data_root.exists():
-        # Check for LIDC-IDRI-XXXX folders
+        # First check immediate folder
         lidc_folders = list(data_root.glob('LIDC-IDRI-*'))
         if lidc_folders:
             print(f"✅ Found {len(lidc_folders)} LIDC-IDRI scan folders in {data_root}")
             return data_root
-    
-    # Check subdirectories
-    for name in possible_names:
-        candidate = data_root / name
-        if candidate.exists():
-            lidc_folders = list(candidate.glob('LIDC-IDRI-*'))
-            if lidc_folders:
-                print(f"✅ Found LIDC-IDRI dataset at: {candidate}")
-                return candidate
+            
+        # Search recursively up to a reasonable depth
+        for p in data_root.rglob('LIDC-IDRI-*'):
+            if p.is_dir() and p.name.startswith("LIDC-IDRI-"):
+                parent_dir = p.parent
+                lidc_folders = list(parent_dir.glob('LIDC-IDRI-*'))
+                print(f"✅ Found {len(lidc_folders)} LIDC-IDRI scan folders at: {parent_dir}")
+                return parent_dir
     
     return None
 
 
 def check_preprocessing_status(processed_dir: Path) -> bool:
     """Check if data has been preprocessed"""
-    if not processed_dir.exists():
-        return False
-    
-    # Check for preprocessed files
-    npy_files = list(processed_dir.glob('*_image.npy'))
-    return len(npy_files) > 0
+    # Always return False so that preprocess_data checks files individually.
+    # The inner loop already skips files that exist.
+    return False
 
 
 def check_annotations_status(annotations_dir: Path) -> bool:

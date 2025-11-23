@@ -2,16 +2,14 @@
 
 A comprehensive deep learning framework for detecting lung nodules in CT scans using a hybrid 3D CNN-Transformer architecture with explainable AI capabilities.
 
-## 🚀 Quick Start (For University Lab with H100 GPU)
-
+## 🚀 Quick Start 
 ### Prerequisites
 - Python 3.8+
 - CUDA-capable GPU (tested on H100)
 - LIDC-IDRI dataset downloaded
 
-### Step 1: Upload Project to Lab PC
+### Step 1: Upload Project 
 ```bash
-# Upload the entire project folder to the lab PC
 # The folder structure should be:
 lung_nodule_detection/
 ├── main.py

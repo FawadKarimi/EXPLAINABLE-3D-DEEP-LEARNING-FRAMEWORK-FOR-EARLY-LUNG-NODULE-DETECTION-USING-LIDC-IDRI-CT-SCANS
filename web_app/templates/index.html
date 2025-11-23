@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Lung Nodule Detection | Advanced Medical Imaging</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Premium Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                        <circle cx="24" cy="24" r="20" stroke="url(#gradient1)" stroke-width="3" fill="none" />
+                        <circle cx="24" cy="24" r="12" fill="url(#gradient2)" opacity="0.4" />
+                        <circle cx="24" cy="24" r="6" fill="url(#gradient3)" />
+                        <defs>
+                            <linearGradient id="gradient1" x1="0" y1="0" x2="48" y2="48">
+                                <stop offset="0%" stop-color="#0066FF" />
+                                <stop offset="100%" stop-color="#00D9FF" />
+                            </linearGradient>
+                            <linearGradient id="gradient2" x1="0" y1="0" x2="48" y2="48">
+                                <stop offset="0%" stop-color="#0066FF" />
+                                <stop offset="100%" stop-color="#00D9FF" />
+                            </linearGradient>
+                            <linearGradient id="gradient3" x1="0" y1="0" x2="48" y2="48">
+                                <stop offset="0%" stop-color="#0066FF" />
+                                <stop offset="100%" stop-color="#00D9FF" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <h1>AI Lung Nodule Detection</h1>
+                </div>
+                <div class="header-info">
+                    <span class="status-badge">✨ AI-Powered Analysis</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Upload Section -->
+            <section class="upload-section" id="uploadSection">
+                <div class="upload-card">
+                    <div class="upload-icon">
+                        <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+                            <path d="M50 15V65M50 15L30 35M50 15L70 35" stroke="url(#uploadGradient)" stroke-width="4"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M20 55V75C20 80.523 24.477 85 30 85H70C75.523 85 80 80.523 80 75V55"
+                                stroke="url(#uploadGradient)" stroke-width="4" stroke-linecap="round" />
+                            <defs>
+                                <linearGradient id="uploadGradient" x1="0" y1="0" x2="100" y2="100">
+                                    <stop offset="0%" stop-color="#0066FF" />
+                                    <stop offset="100%" stop-color="#00D9FF" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <h2>Upload CT Scan</h2>
+                    <p class="upload-description">Advanced AI-powered analysis for precise nodule detection and
+                        malignancy assessment</p>
+
+                    <div class="upload-zone" id="uploadZone">
+                        <input type="file" id="fileInput" accept=".dcm,.nii,.nii.gz,.zip" hidden>
+                        <p class="upload-text">✨ Drag and drop your CT scan here</p>
+                        <p class="upload-subtext">or</p>
+                        <button class="btn-primary" onclick="document.getElementById('fileInput').click()">
+                            Browse Files
+                        </button>
+                        <p class="upload-formats">📁 Supported: DICOM (.dcm), NIfTI (.nii, .nii.gz), ZIP archives</p>
+                    </div>
+
+                    <div class="upload-progress" id="uploadProgress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <p class="progress-text" id="progressText">Processing...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-header">
+                    <h2>🔬 Analysis Results</h2>
+                    <button class="btn-secondary" onclick="resetAnalysis()">New Analysis</button>
+                </div>
+
+                <div class="results-grid">
+                    <!-- Prediction Card - Large -->
+                    <div class="result-card prediction-card">
+                        <div class="card-header">
+                            <h3>🎯 Diagnosis</h3>
+                            <span class="result-badge" id="resultBadge">-</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="prediction-result" id="predictionResult">
+                                <div class="prediction-label">Classification Result</div>
+                                <div class="prediction-value" id="predictionValue">-</div>
+                            </div>
+                            <div class="confidence-meter">
+                                <div class="confidence-label">AI Confidence Level</div>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" id="confidenceFill"></div>
+                                </div>
+                                <div class="confidence-value" id="confidenceValue">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Probabilities Card -->
+                    <div class="result-card">
+                        <div class="card-header">
+                            <h3>📊 Probability Distribution</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="probability-item">
+                                <div class="prob-label">
+                                    <span class="prob-dot benign"></span>
+                                    Benign Probability
+                                </div>
+                                <div class="prob-bar">
+                                    <div class="prob-fill benign" id="probBenignFill"></div>
+                                </div>
+                                <div class="prob-value" id="probBenignValue">-</div>
+                            </div>
+                            <div class="probability-item">
+                                <div class="prob-label">
+                                    <span class="prob-dot malignant"></span>
+                                    Malignant Probability
+                                </div>
+                                <div class="prob-bar">
+                                    <div class="prob-fill malignant" id="probMalignantFill"></div>
+                                </div>
+                                <div class="prob-value" id="probMalignantValue">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visualization Card - Large -->
+                    <div class="result-card visualization-card">
+                        <div class="card-header">
+                            <h3>🧠 AI Explainability Heatmap</h3>
+                            <span class="info-icon"
+                                title="AI-generated heatmap highlighting regions of interest">ⓘ</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="visualization-container">
+                                <img id="visualizationImage" src="" alt="AI Heatmap Visualization">
+                                <div class="heatmap-legend">
+                                    <span>Low Attention</span>
+                                    <div class="legend-gradient"></div>
+                                    <span>High Attention</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metadata Card -->
+                    <div class="result-card">
+                        <div class="card-header">
+                            <h3>📋 Scan Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="metadata-grid">
+                                <div class="metadata-item">
+                                    <span class="metadata-label">Dimensions</span>
+                                    <span class="metadata-value" id="metadataShape">-</span>
+                                </div>
+                                <div class="metadata-item">
+                                    <span class="metadata-label">Voxel Spacing</span>
+                                    <span class="metadata-value" id="metadataSpacing">-</span>
+                                </div>
+                                <div class="metadata-item">
+                                    <span class="metadata-label">Analysis Time</span>
+                                    <span class="metadata-value" id="metadataTime">-</span>
+                                </div>
+                                <div class="metadata-item">
+                                    <span class="metadata-label">AI Model</span>
+                                    <span class="metadata-value">Hybrid CNN-Transformer</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Premium Disclaimer -->
+                <div class="disclaimer">
+                    <strong>⚕️ Medical Disclaimer:</strong> This AI system is designed to assist healthcare
+                    professionals in detecting lung nodules.
+                    All results should be reviewed and validated by qualified radiologists. This tool should not be used
+                    as the sole basis for clinical decisions.
+                    Always consult with medical professionals for proper diagnosis and treatment.
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Premium Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2024 AI Lung Nodule Detection System | Powered by Advanced Deep Learning & Medical Imaging AI</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

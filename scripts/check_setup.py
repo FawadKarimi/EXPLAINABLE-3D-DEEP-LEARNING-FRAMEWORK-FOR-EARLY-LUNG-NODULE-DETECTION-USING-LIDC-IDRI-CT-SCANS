@@ -4,6 +4,10 @@ Checks if everything is configured correctly before training
 """
 
 import sys
+# Force UTF-8 encoding for standard output to support emojis on Windows
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
 from pathlib import Path
 import torch
 
@@ -79,25 +83,18 @@ def check_lidc_data(data_root='./data'):
         print("   Please download LIDC-IDRI dataset and place it in ./data/")
         return False
     
-    # Check for LIDC folders
-    lidc_folders = list(data_path.glob('LIDC-IDRI-*'))
-    
-    if not lidc_folders:
-        # Check subdirectories
-        for subdir in ['LIDC-IDRI', 'lidc-idri', 'LIDC', 'lidc']:
-            candidate = data_path / subdir
-            if candidate.exists():
-                lidc_folders = list(candidate.glob('LIDC-IDRI-*'))
-                if lidc_folders:
-                    print(f"✅ Found LIDC-IDRI dataset: {len(lidc_folders)} scans")
-                    return True
-        
-        print(f"⚠️  No LIDC-IDRI folders found in {data_path}")
-        print("   Please download LIDC-IDRI dataset")
-        return False
-    
-    print(f"✅ Found LIDC-IDRI dataset: {len(lidc_folders)} scans")
-    return True
+    # Check for LIDC folders using rglob for nested structures
+    for p in data_path.rglob('LIDC-IDRI-*'):
+        if p.is_dir() and "LIDC-IDRI-" in p.name:
+            parent_dir = p.parent
+            lidc_folders = list(parent_dir.glob('LIDC-IDRI-*'))
+            if lidc_folders:
+                print(f"✅ Found LIDC-IDRI dataset: {len(lidc_folders)} scans at {parent_dir}")
+                return True
+                
+    print(f"⚠️  No LIDC-IDRI folders found in {data_path}")
+    print("   Please download LIDC-IDRI dataset")
+    return False
 
 def main():
     """Run all checks"""

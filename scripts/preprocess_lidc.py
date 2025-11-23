@@ -94,7 +94,7 @@ def preprocess_lidc_dataset(
     print("="*70)
     
     # Step 2: DICOM to NIfTI conversion
-    print("\n📁 Step 1/2: Converting DICOM to NIfTI with HU standardization...")
+    print("\n[Step 1/2] Converting DICOM to NIfTI with HU standardization...")
     converter = DicomToNiftiConverter(str(nifti_dir))
     
     nifti_files = []
@@ -114,7 +114,7 @@ def preprocess_lidc_dataset(
             series_dir = find_dicom_series(patient_dir)
             
             if series_dir is None:
-                print(f"⚠️  No DICOM series found for {scan_id}")
+                print(f"[WARN] No DICOM series found for {scan_id}")
                 failed_conversions.append(scan_id)
                 continue
             
@@ -126,10 +126,10 @@ def preprocess_lidc_dataset(
             nifti_files.append(Path(output_path))
             
         except Exception as e:
-            print(f"❌ Error converting {scan_id}: {e}")
+            print(f"[ERROR] Error converting {scan_id}: {e}")
             failed_conversions.append(scan_id)
     
-    print(f"\n✅ DICOM conversion complete:")
+    print(f"\n[OK] DICOM conversion complete:")
     print(f"   Successful: {len(nifti_files)}")
     print(f"   Failed: {len(failed_conversions)}")
     
@@ -137,9 +137,9 @@ def preprocess_lidc_dataset(
         print(f"   Failed scans: {failed_conversions[:5]}...")
     
     # Step 3: Complete preprocessing pipeline
-    print("\n🔄 Step 2/2: Applying preprocessing pipeline...")
-    print("   - Hounsfield Unit normalization (window: -600±700 HU)")
-    print("   - Isotropic resampling to 1mm³")
+    print("\n[Step 2/2] Applying preprocessing pipeline...")
+    print("   - Hounsfield Unit normalization (window: -600+/-700 HU)")
+    print("   - Isotropic resampling to 1mm^3")
     print("   - Automatic lung segmentation")
     
     pipeline = PreprocessingPipeline(
@@ -170,20 +170,20 @@ def preprocess_lidc_dataset(
             successful += 1
             
         except Exception as e:
-            print(f"❌ Error processing {scan_id}: {e}")
+            print(f"[ERROR] Error processing {scan_id}: {e}")
             failed_processing.append(scan_id)
     
     # Summary
     print("\n" + "="*70)
     print("Preprocessing Complete!")
     print("="*70)
-    print(f"✅ Successfully processed: {successful}/{len(nifti_files)} scans")
+    print(f"[OK] Successfully processed: {successful}/{len(nifti_files)} scans")
     
     if failed_processing:
-        print(f"❌ Failed: {len(failed_processing)} scans")
+        print(f"[ERROR] Failed: {len(failed_processing)} scans")
         print(f"   {failed_processing[:5]}...")
     
-    print(f"\n📂 Preprocessed files saved to: {output_dir}")
+    print(f"\n[OUTPUT] Preprocessed files saved to: {output_dir}")
     print(f"   Format: SCAN-ID_image.npy (normalized CT)")
     print(f"           SCAN-ID_mask.npy (lung mask)")
     print(f"           SCAN-ID_metadata.json (spacing, origin, etc.)")
@@ -205,7 +205,7 @@ def preprocess_lidc_dataset(
     with open(output_dir / 'preprocessing_summary.json', 'w') as f:
         json.dump(summary, f, indent=2)
     
-    print(f"\n✅ Summary saved to: {output_dir / 'preprocessing_summary.json'}")
+    print(f"\n[OK] Summary saved to: {output_dir / 'preprocessing_summary.json'}")
 
 
 def main():

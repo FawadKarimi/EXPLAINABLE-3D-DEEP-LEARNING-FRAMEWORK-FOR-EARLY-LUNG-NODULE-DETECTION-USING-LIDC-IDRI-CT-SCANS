@@ -1,0 +1,13 @@
+# Install these packages individually if needed
+# First install: pip install Flask Werkzeug
+# Then: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+# Then: pip install numpy scipy nibabel Pillow pydicom
+
+Flask>=3.0.0
+Werkzeug>=3.0.0
+# torch - install separately with: pip install torch --index-url https://download.pytorch.org/whl/cpu
+# numpy - will be installed as torch dependency
+nibabel>=5.2.0
+Pillow>=10.0.0
+scipy>=1.11.0
+pydicom>=2.4.0

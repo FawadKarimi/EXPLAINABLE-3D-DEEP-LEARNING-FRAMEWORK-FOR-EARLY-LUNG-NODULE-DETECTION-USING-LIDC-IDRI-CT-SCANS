@@ -339,8 +339,11 @@ class Trainer:
             })
         
         # Average losses
-        for key in epoch_losses.keys():
-            epoch_losses[key] /= num_batches
+        if num_batches > 0:
+            for key in epoch_losses.keys():
+                epoch_losses[key] /= num_batches
+        else:
+            print("⚠️ Warning: No batches were processed in this train epoch. Dataset might be empty.")
         
         return epoch_losses
     
@@ -381,8 +384,11 @@ class Trainer:
         
         # Average losses
         num_batches = len(self.val_loader)
-        for key in epoch_losses.keys():
-            epoch_losses[key] /= num_batches
+        if num_batches > 0:
+            for key in epoch_losses.keys():
+                epoch_losses[key] /= num_batches
+        else:
+            print("⚠️ Warning: No batches were processed in this val epoch. Dataset might be empty.")
         
         # Compute accuracy
         accuracy = 100.0 * correct / total
